@@ -3,7 +3,8 @@ import threading
 from connection import Connection
 
 server = Connection()
-playing = False
+WAITING, PLAYING, STARTING = 'WAITING', 'PLAYING', 'STARTING'
+status = WAITING
 
 server.join()
 data, address = server.receive()
@@ -26,7 +27,7 @@ def keyListener():
         elif charBytes == b'2':
             server.leave()
             break
-        elif playing == True:
+        elif status == PLAYING:
             keys = 'abcdefghijklmnopqrstuvwxyz'
             key = charBytes.decode("utf-8")
             if key in keys:
@@ -52,29 +53,33 @@ def handleLeave():
 
 def handleStatus(data):
     printPlayers(data['players'])
-    if playing:
+    if status == PLAYING:
         print('NEXT KEY: ' + data['players'][myAddress]['nextKey'])
 
 
 
 def handleStarted():
-    global playing
-    playing = True
-    print('THE GAME HAS STARTED')
+    global status
+    if status == STARTING:
+        status = PLAYING
+        print('THE GAME HAS STARTED')
 
 
 def handleStarting():
-    print('A NEW GAME WILL START IN 5 SECONDS')
+    global status
+    if status == WAITING:
+        status = STARTING
+        print('A NEW GAME WILL START IN 5 SECONDS')
 
 
 def handleEnded(data):
-    global playing
-    if playing:
+    global status
+    if status == PLAYING:
         if myAddress == data['winner']:
             print('CONGRATULATIONS YOU WON')
         else:
             print('YOU DID NOT WIN THIS TIME')
-        playing = False
+        status = WAITING
 
 
 while True:
