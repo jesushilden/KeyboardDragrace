@@ -11,7 +11,7 @@ game = Game()
 
 
 def handleClose():
-    connection.sendAllTriple({'task': 'CLOSE'}, game.lobby)
+    connection.informClose(game.lobby)
     print('CLOSING SERVER')
     exit()
 
@@ -19,14 +19,14 @@ def handleClose():
 def handleJoin(address):
     if address not in game.lobby:
         game.joinLobby(address)
-        connection.sendTriple({'task': 'JOIN', 'playerAddress': str(address)}, address)
+        connection.ackJoin(address)
         print(str(address) + ' JOINED')
 
 
 def handleLeave(address):
     if address in game.lobby:
         game.leaveLobby(address)
-        connection.sendTriple({'task': 'LEAVE'}, address)
+        connection.ackLeave(address)
         print(str(address) + ' LEFT')
 
 
@@ -37,22 +37,20 @@ def handlePlay(data, address):
         win = game.play(addressString, key)
         if win:
             print('ENDING GAME')
-            connection.sendAllTriple(
-                {'task': 'ENDED', 'winner': addressString}, game.lobby)
+            connection.informEnded(addressString, game.lobby)
 
 
 def startGame():
     game.status = 'STARTING'
     print('STARTING GAME IN 5 SECONDS')
-    connection.sendAllTriple({'task': 'STARTING'}, game.lobby)
+    connection.informStarting(game.lobby)
 
     def startGameDelay():
         sleep(5)
         if len(game.lobby) >= 2:
-            connection.sendAllTriple({'task': 'STARTED'}, game.lobby)
+            connection.informStarted(game.lobby)
             game.startGame()
-            connection.sendAll(
-                {'task': 'STATUS', 'players': game.players}, game.lobby)
+            connection.sendGameStatus(game.players, game.lobby)
             print('GAME STARTED')
         else:
             game.status = 'WAITING'
@@ -62,7 +60,7 @@ def startGame():
 
 
 def sendGameStatus():
-    connection.sendAll({'task': 'STATUS', 'players': game.players}, game.lobby)
+    connection.sendGameStatus(game.players, game.lobby)
 
 
 while(True):

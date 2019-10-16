@@ -43,7 +43,6 @@ class Connection:
                 response = self.receive()
                 break
             except socket.timeout:
-                print('failed')
                 pass
 
         self.UDPClientSocket.settimeout(None)

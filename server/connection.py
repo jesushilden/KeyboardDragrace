@@ -33,3 +33,48 @@ class Connection:
         dataObject = json.loads(dataJSON)
 
         return (dataObject, address)
+
+    def informClose(self, addresses):
+        dataObject = {
+            'task': 'CLOSE'
+        }
+        self.sendAllTriple(dataObject, addresses)
+    
+    def informEnded(self, winner, addresses):
+        dataObject = {
+            'task': 'ENDED',
+            'winner': winner
+        }
+        self.sendAllTriple(dataObject, addresses)
+    
+    def informStarting(self, addresses):
+        dataObject = {
+            'task': 'STARTING'
+        }
+        self.sendAllTriple(dataObject, addresses)
+    
+    def informStarted(self, addresses):
+        dataObject = {
+            'task': 'STARTED'
+        }
+        self.sendAllTriple(dataObject, addresses)
+    
+    def sendGameStatus(self, players, addresses):
+        dataObject = {
+            'task': 'STATUS',
+            'players': players
+        }
+        self.sendAll(dataObject, addresses)
+
+    def ackJoin(self, address):
+        dataObject = {
+            'task': 'JOIN',
+            'playerAddress': str(address)
+        }
+        self.sendTriple(dataObject, address)
+    
+    def ackLeave(self, address):
+        dataObject = {
+            'task': 'LEAVE'
+        }
+        self.sendTriple(dataObject, address)
