@@ -6,8 +6,11 @@ server = Connection()
 WAITING, PLAYING, STARTING = 'WAITING', 'PLAYING', 'STARTING'
 status = WAITING
 
-server.join()
-data, address = server.receive()
+data, address = server.join()
+if data == None:
+    print('COULD NOT CONNECT TO GAME DUE TO CONNECTION ISSUES')
+    exit()
+
 myAddress = data['playerAddress']
 
 print('CONNECTED TO THE GAME')
@@ -60,7 +63,7 @@ def handleStatus(data):
 
 def handleStarted():
     global status
-    if status == STARTING:
+    if status == STARTING or status == WAITING:
         status = PLAYING
         print('THE GAME HAS STARTED')
 

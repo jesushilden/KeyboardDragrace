@@ -19,8 +19,7 @@ def handleClose():
 def handleJoin(address):
     if address not in game.lobby:
         game.joinLobby(address)
-        connection.sendTriple(
-            {'task': 'JOIN', 'playerAddress': str(address)}, address)
+        connection.sendTriple({'task': 'JOIN', 'playerAddress': str(address)}, address)
         print(str(address) + ' JOINED')
 
 
