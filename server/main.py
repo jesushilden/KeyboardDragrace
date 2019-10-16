@@ -1,3 +1,6 @@
+# Peter Hildén
+# 014682715
+
 from time import sleep
 import threading
 from connection import Connection

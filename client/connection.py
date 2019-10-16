@@ -1,3 +1,6 @@
+# Peter Hildén
+# 014682715
+
 import socket
 import json
 
